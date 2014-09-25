@@ -1,6 +1,7 @@
 #include "PbPb_track_correction.h"
 #include <iostream>
-#include "../../ntupler/trackTree.C"
+#include "HiForest/HiForestAnalysis/hiForest.h"
+
 
 void example()
 {
@@ -29,38 +30,34 @@ void example()
   the number of jets in the event
 
 */
+ HiForest *  h = new HiForest("/mnt/hadoop/cms/store/user/velicanu/PbPbForest_MatchEqR_Calo_HIHighPt_HIRun2011-14Mar2014-v4-reclean/1.root","forest");
+ h->LoadNoTrees();
+ h->hasTrackTree = true;
+ h->hasEvtTree = true;
+ h->hasAkVs3CaloJetTree = true;
 
-//opening File
- TString directory="/mnt/hadoop/cms/store/user/velicanu/";
- const char* infname = "/HydjetDrum_Pyquen_Dijet80_FOREST_Track8_Jet24_FixedPtHatJES_v0/0";
 
-//declaring trees
- trackTree * ftrk;
- HiTree * fhi;
- t * fjet;
- ftrk = new trackTree(Form("%s/%s.root",directory.Data(),infname));
- fhi = new HiTree(Form("%s/%s.root",directory.Data(),infname));
- fjet = new t(Form("%s/%s.root",directory.Data(),infname));
-
+ int nEntries = h->GetEntries();
 //looping over events
-for(int i=0; i<2; i++)
+for(int i=0; i<nEntries; i++)
   {
-    ftrk->GetEntry(i);
-    fhi->GetEntry(i);
-    fjet->GetEntry(i);
+    h->GetEntry(i);
 
-    double cent = fhi->hiBin;
+    //only for this data file, to avoid some empty events
+    if(h->track.nTrk == 0) continue;
 
+    double cent = h->evt.hiBin;
+    
     //track loop
-    for( int j=0; j<100; j++)
-    {  
-      double pt = ftrk->trkPt[j];
-      double eta = ftrk->trkEta[j];
-      double phi = ftrk->trkPhi[j];
+    for( int j=0; j<20; j++)
+    { 
+      double pt = h->track.trkPt[j];
+      double eta = h->track.trkEta[j];
+      double phi = h->track.trkPhi[j];
 
       //correction is grabbed here
-      double corr = getCorrection(pt,eta,phi,cent,fjet->jtpt,fjet->jteta,fjet->jtphi,fjet->nref);
-      std::cout << corr << std::endl;
+      double corr = getCorrection(pt,eta,phi,cent,h->akVs3Calo.jtpt,h->akVs3Calo.jteta,h->akVs3Calo.jtphi,h->akVs3Calo.nref);
+      std::cout << corr << "\n" << std::endl;
     }
   }
 }
