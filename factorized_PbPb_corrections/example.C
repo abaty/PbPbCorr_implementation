@@ -39,7 +39,8 @@ void example()
 
  int nEntries = h->GetEntries();
 //looping over events
-for(int i=0; i<nEntries; i++)
+//for(int i=0; i<nEntries; i++)
+for(int i=0; i<5; i++)  
   {
     h->GetEntry(i);
 
@@ -55,9 +56,11 @@ for(int i=0; i<nEntries; i++)
       double eta = h->track.trkEta[j];
       double phi = h->track.trkPhi[j];
 
+      if(pt<=0.5) continue;
+
       //correction is grabbed here
       double corr = getCorrection(pt,eta,phi,cent,h->akVs3Calo.jtpt,h->akVs3Calo.jteta,h->akVs3Calo.jtphi,h->akVs3Calo.nref);
-      std::cout << corr << "\n" << std::endl;
+      std::cout << corr  << std::endl;
     }
   }
 }

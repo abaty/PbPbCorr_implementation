@@ -36,7 +36,7 @@ void initializeCorrections()
   {
     for(int i=0; i<n_eff;i++)
       {
-        f_eff[i] = new TFile(Form("eff_pt%d_%d_cent%d_%d.root",(int)(100*ptmin_eff[i]),(int)(100*ptmax_eff[i]),(int)(0.5*cent_min_eff[i]),(int)(0.5*cent_max_eff[i])));
+        f_eff[i] = new TFile(Form("corrections/eff_pt%d_%d_cent%d_%d.root",(int)(100*ptmin_eff[i]),(int)(100*ptmax_eff[i]),(int)(0.5*cent_min_eff[i]),(int)(0.5*cent_max_eff[i])));
         p_eff_cent[i] = (TProfile*)f_eff[i]->Get("p_eff_cent");
         p_eff_pt[i] = (TProfile*)f_eff[i]->Get("p_eff_pt");
         p_eff_accept[i] = (TProfile2D*)f_eff[i]->Get("p_eff_acceptance");
@@ -45,7 +45,7 @@ void initializeCorrections()
  
     for(int i=0; i<n_fake;i++)
       {
-        f_fake[i] = new TFile(Form("fake_pt%d_%d_cent%d_%d.root",(int)(100*ptmin_fake[i]),(int)(100*ptmax_fake[i]),(int)(0.5*cent_min_fake[i]),(int)(0.5*cent_max_fake[i])));
+        f_fake[i] = new TFile(Form("corrections/fake_pt%d_%d_cent%d_%d.root",(int)(100*ptmin_fake[i]),(int)(100*ptmax_fake[i]),(int)(0.5*cent_min_fake[i]),(int)(0.5*cent_max_fake[i])));
         p_fake_cent[i] = (TProfile*)f_fake[i]->Get("p_fake_cent");
         p_fake_pt[i] = (TProfile*)f_fake[i]->Get("p_fake_pt");
         p_fake_accept[i] = (TProfile2D*)f_fake[i]->Get("p_fake_acceptance");
@@ -131,20 +131,20 @@ double getCorrection(double pt, double eta, double phi, double cent, Float_t* jt
   {
     if(eta<-2.4 || eta>2.4)
     { 
-      std::cout << "eta out of range (-2.4,2.4)! Returning 0." << std::endl;
-      return 0;
+      std::cout << "eta out of range [-2.4,2.4]! Apply this eta cut before getting tracking corrections.  Terminating execution." << std::endl;
+      std::exit(1);
     }
 
     if(pt<0.5)
     {
-      std::cout << "pt less than 0.5 (should be >=0.5).  Returning 0." << std::endl;
-      return 0;
+      std::cout << "pt less than 0.5 (should be >=0.5).  Apply this cut before getting tracking corrections.  Terminating execution." << std::endl;
+      std::exit(1);
     }
 
     if(cent<0 || cent>200)
     {
-      std::cout << "cent not within valid range [0,200].  Returning 0." << std::endl;
-      return 0;
+      std::cout << "cent not within valid range [0,200).  Apply this cut before getting tracking corrections.  Terminating execution." << std::endl;
+      std::exit(1);
     }
 
     double rmin = getRmin(eta,phi,jtPt,jtEta,jtPhi,nref);
