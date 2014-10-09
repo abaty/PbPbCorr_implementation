@@ -91,7 +91,7 @@ double getEfficiency(double pt, double eta, double phi, double cent, double rmin
  
     if(eff==0)
       {
-        std::cout<<"zero efficiency"<<" eta="<<eta<<" pt="<<pt<<" phi="<<phi<<" cent="<<cent<< std::endl;
+        //std::cout<<"zero efficiency"<<" eta="<<eta<<" pt="<<pt<<" phi="<<phi<<" cent="<<cent<< std::endl;
         
         if(pt>100) eff=0.8;
           else     eff=1;
